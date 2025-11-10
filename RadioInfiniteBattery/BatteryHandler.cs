@@ -1,18 +1,16 @@
-﻿using LabApi.Events.Arguments.PlayerEvents;
-using LabApi.Events.CustomHandlers;
+﻿using System.Collections.Generic;
+using System.Reflection.Emit;
+using HarmonyLib;
+using InventorySystem.Items.Radio;
 
-namespace RadioInfiniteBattery
+namespace RadioInfiniteBattery;
+
+[HarmonyPatch(typeof(RadioPickup), nameof(RadioPickup.LateUpdate))]
+public class BatteryPatch
 {
-    public class BatteryHandler : CustomEventsHandler
+    [HarmonyTranspiler]
+    private IEnumerator<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
     {
-        public override void OnPlayerUsingRadio(PlayerUsingRadioEventArgs ev)
-        {
-            if (ev.RadioItem.Base.BatteryPercent != 100)
-            {
-                ev.RadioItem.Base.BatteryPercent = 100;
-            }
-            
-            ev.Drain = 0;
-        }
+        yield return new CodeInstruction(OpCodes.Ret);
     }
 }
